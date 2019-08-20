@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/GP_22MX.iml" filepath="$PROJECT_DIR$/.idea/GP_22MX.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SparkAD/SparkAD.iml" filepath="$PROJECT_DIR$/SparkAD/SparkAD.iml" />
     </modules>
   </component>
 </project>
