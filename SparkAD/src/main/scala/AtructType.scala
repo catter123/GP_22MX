@@ -1,3 +1,5 @@
+import org.apache.hadoop.hive.ql.exec.spark.session.SparkSession
+import org.apache.spark.sql.functions.avg
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -23,6 +25,7 @@ object ADD {
 
     // 创建执行入口
     val sc = new SparkContext(conf)
+
     val sQLContext = new SQLContext(sc)
 
     // 设置压缩方式 使用Snappy方式进行压缩
@@ -125,7 +128,15 @@ object ADD {
       })
   val dataFrame = sQLContext.createDataFrame(count,SchemaUtils.structtype)
 
-    dataFrame.write.parquet(outputPath)
+//    dataFrame.write.parquet(outputPath)
+
+
+
+    val dFrae =dataFrame.groupBy(dataFrame("provincename"), dataFrame("cityname")).count()
+
+    dFrae.show()
+
+
     sc.stop()
 
 
