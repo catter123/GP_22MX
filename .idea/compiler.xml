@@ -6,11 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="SparkAD" />
+        <module name="GP_22MX" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="SparkAD" target="1.5" />
-    </bytecodeTargetLevel>
   </component>
 </project>
