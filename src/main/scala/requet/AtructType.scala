@@ -1,8 +1,8 @@
-import java.util.Properties
-
+package requet
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, Row, SQLContext}
+import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
+import org.apache.spark.sql.{DataFrame, Row, SQLContext, SparkSession}
 import org.apache.spark.{SparkConf, SparkContext}
 
 
@@ -130,32 +130,52 @@ object ADD {
       })
   val dataFrame = sQLContext.createDataFrame(count,SchemaUtils.structtype)
 
-//    dataFrame.write.parquet(outputPath)
+    dataFrame.write.parquet(outputPath)
+
+    val spark = SparkSession.builder().config(conf).getOrCreate()
+
+    //获取数据
+    val frame: DataFrame = spark.read.parquet(outputPath).select("provincename","cityname")
+    frame.createOrReplaceTempView("test")
+    spark.sql("select * from test").show()
+    val tup = frame.rdd.map(x => {
+      val provincename = x(0).toString
+      val cityname = x(1).toString
+      ((provincename, cityname), 1)
+    })
+    //分组，统计
+    val end: RDD[((String, String), Int)] = tup.reduceByKey(_+_)
+
+    val ffm= end.map(x=>Row(x._1._1,x._1._2,x._2))
+    val structType = StructType(
+      Seq(
+        StructField("provincename",StringType),
+        StructField("cityname", StringType),
+        StructField("count", IntegerType)
+      )
+    )
+    val fv = spark.createDataFrame(ffm,structType)
+
+    //导出到HDFS
+//    fv.write.mode("append").json("")
 
 
-
-    val dFrae: DataFrame = dataFrame.groupBy(dataFrame("provincename"), dataFrame("cityname")).count()
-
-
-    val rdd: RDD[Row] = dFrae.rdd
-    println(rdd.map(x => (x(0), x(1), x(2))).collect.toBuffer)
-    dFrae.show()
-
-//    val pp = new Properties
-//    pp.put("user","root")
-//    pp.put("password","catter")
-//
-//    dFrae.write.jdbc("jdbc:mysql://localhost:3306/test","add",pp)
-
-    sQLContext.sql("")
-    dFrae.write.format("jdbc")
-        .option("url","jdbc:mysql://localhost:3306/test?useSSL=false")
-        .option("dbtable","add")
-        .option("user","root")
-        .option("password","catter")
-        .save()
-
-    sc.stop()
+    //导出到数据库
+    ////    val pp = new Properties()
+    ////    pp.put("user","root")
+    ////    pp.put("password","catter")
+    ////
+    ////    fv.write.jdbc("jdbc:mysql://localhost:3306/test","add1",pp)
+    //
+    //
+    ////    fv.write.format("jdbc")
+    ////          .option("url","jdbc:mysql://localhost:3306/test")
+    ////          .option("dbtable","add1")
+    ////          .option("user","root")
+    ////          .option("password","catter")
+    ////          .save()
+    //////
+//        sc.stop()
 
 
   }
