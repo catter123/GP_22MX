@@ -1,8 +1,7 @@
 import java.util.Properties
 
-import org.apache.hadoop.hive.ql.exec.spark.session.SparkSession
+
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.functions.avg
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -137,6 +136,7 @@ object ADD {
 
     val dFrae: DataFrame = dataFrame.groupBy(dataFrame("provincename"), dataFrame("cityname")).count()
 
+
     val rdd: RDD[Row] = dFrae.rdd
     println(rdd.map(x => (x(0), x(1), x(2))).collect.toBuffer)
     dFrae.show()
@@ -147,12 +147,13 @@ object ADD {
 //
 //    dFrae.write.jdbc("jdbc:mysql://localhost:3306/test","add",pp)
 
-//    dFrae.write.format("jdbc")
-//        .option("url","jdbc:mysql://localhost:3306/test")
-//        .option("dbtable","add")
-//        .option("user","root")
-//        .option("password","catter")
-//        .save()
+    sQLContext.sql("")
+    dFrae.write.format("jdbc")
+        .option("url","jdbc:mysql://localhost:3306/test?useSSL=false")
+        .option("dbtable","add")
+        .option("user","root")
+        .option("password","catter")
+        .save()
 
     sc.stop()
 
