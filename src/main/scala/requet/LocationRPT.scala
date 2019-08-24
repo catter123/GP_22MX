@@ -54,10 +54,10 @@ object LocationRPT {
 //    val res1: RDD[((String, String), List[Double])] = tup.reduceByKey((a, b)=>List(a(0)+b(0),a(1)+b(1),a(2)+b(2),a(3)+b(3),a(4)+b(4),a(5)+b(5),a(6)+b(6),a(7)+b(7),a(8)+b(8)))
 //
 //    res1.map(x=>(x._1._1,x._1._2,x._2(0),x._2(1),x._2(2),x._2(3),x._2(4),x._2(5),x._2(6),x._2(7),x._2(8))).collect().foreach(println)
-val prop = new Properties()
+    val prop = new Properties()
     prop.put("user","root")
     prop.put("password","catter")
-    val url="jdbc:mysql://localhost:3306/test"
+    val url="jdbc:mysql://localhost:3306/adactive"
 
     /**
       * *****************
@@ -70,8 +70,8 @@ val prop = new Properties()
 //      (pro, city1)
 //    })
 //    val tup = citypro.zip(tup1)
-//    val city = tup.reduceByKey((list1, list2) => list1.zip(list2).map(t => t._1 + t._2)).map(x => (x._1._1, x._1._2, x._2(0), x._2(1), x._2(2), x._2(3), x._2(4), x._2(5), x._2(6), x._2(7), x._2(8)))
-//      .toDF("省市", "城市", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数", "展示量", "点击量", "广告消费", "广告成本")
+//    val city = tup.reduceByKey((list1, list2) => list1.zip(list2).map(x => (x._1._1,x._1._2,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4),if(x._2(3)==0) 0 else x._2(3)/x._2(4), x._2(5), x._2(6),if(x._2(5)==0) 0 else x._2(6)/x._2(5), x._2(7), x._2(8)))
+//      .toDF("省市", "城市", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数","竞价成功率", "展示量", "点击量","点击率", "广告消费", "广告成本")
 //
 
 
@@ -90,8 +90,8 @@ val prop = new Properties()
 //      ispname
 //    })
 //    isp.zip(tup1)
-//      .reduceByKey((list1,list2)=>list1.zip(list2).map(t=>t._1+t._2)).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4), x._2(5), x._2(6), x._2(7), x._2(8)))
-//      .toDF("运营商", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数", "展示量", "点击量", "广告消费", "广告成本")
+//      .reduceByKey((list1,list2)=>list1.zip(list2).map(t=>t._1+t._2)).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4),if(x._2(3)==0) 0 else x._2(3)/x._2(4), x._2(5), x._2(6),if(x._2(5)==0) 0 else x._2(6)/x._2(5), x._2(7), x._2(8)))
+//      .toDF("运营商", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数","竞价成功率", "展示量", "点击量","点击率", "广告消费", "广告成本")
 //      .write.jdbc(url,"isp",prop)
 //
 //
@@ -107,8 +107,8 @@ val prop = new Properties()
 //      networkmannername
 //    })
 //    tupnetworkmannername.zip(tup1)
-//      .reduceByKey((list1,list2)=>list1.zip(list2).map(t=>t._1+t._2)).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4), x._2(5), x._2(6), x._2(7), x._2(8)))
-//      .toDF("网络类型", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数", "展示量", "点击量", "广告消费", "广告成本")
+//      .reduceByKey((list1,list2)=>list1.zip(list2).map(t=>t._1+t._2)).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4),if(x._2(3)==0) 0 else x._2(3)/x._2(4), x._2(5), x._2(6),if(x._2(5)==0) 0 else x._2(6)/x._2(5), x._2(7), x._2(8)))
+//      .toDF("网络类型", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数","竞价成功率", "展示量", "点击量","点击率", "广告消费", "广告成本")
 //      .write.jdbc(url,"networkmannername",prop)
 //
 
@@ -130,8 +130,8 @@ val prop = new Properties()
 //      str
 //    })
 //    val tupisp = tupdevicetype.zip(tup1)
-//      .reduceByKey((list1,list2)=>list1.zip(list2).map(t=>t._1+t._2)).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4), x._2(5), x._2(6), x._2(7), x._2(8)))
-//      .toDF("设备类型", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数", "展示量", "点击量", "广告消费", "广告成本")
+//      .reduceByKey((list1,list2)=>list1.zip(list2).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4),if(x._2(3)==0) 0 else x._2(3)/x._2(4), x._2(5), x._2(6),if(x._2(5)==0) 0 else x._2(6)/x._2(5), x._2(7), x._2(8)))
+//      .toDF("设备类型", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数","竞价成功率", "展示量", "点击量","点击率", "广告消费", "广告成本")
 //      .write.jdbc(url,"devicetype",prop)
 //
 
@@ -155,8 +155,8 @@ val prop = new Properties()
 //      client
 //    })
 //    osversion.zip(tup1)
-//      .reduceByKey((list1,list2)=>list1.zip(list2).map(t=>t._1+t._2)).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4), x._2(5), x._2(6), x._2(7), x._2(8)))
-//      .toDF("操作系桶", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数", "展示量", "点击量", "广告消费", "广告成本")
+//      .reduceByKey((list1,list2)=>list1.zip(list2).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4),if(x._2(3)==0) 0 else x._2(3)/x._2(4), x._2(5), x._2(6),if(x._2(5)==0) 0 else x._2(6)/x._2(5), x._2(7), x._2(8)))
+//      .toDF("操作系桶", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数","竞价成功率", "展示量", "点击量","点击率", "广告消费", "广告成本")
 //      .write.jdbc(url,"client",prop)
 //
 
@@ -165,7 +165,7 @@ val prop = new Properties()
       * 媒体分析
       * *****************
       */
-    val nume= sc.textFile("D:/feQ/share/Spark用户画像分析/app.txt")
+    val nume= sc.textFile("D:/feQ/share/Spark用户画像分析/app7.txt")
       .map(line => {
         val appname = line.substring(1, line.indexOf(","))
         val idd = line.substring(line.indexOf(",") + 1, line.length - 1)
@@ -176,16 +176,21 @@ val prop = new Properties()
     val mapp: Broadcast[Map[String, String]] = sc.broadcast(nume)
 
     val tupmediatype: RDD[String] = df.map(appna => {
-      val app = appna.getAs[String]("appname")
+      val app: String = appna.getAs[String]("appname")
       val appid = appna.getAs[String]("appid")
-      mapp.value.getOrElse(appid,app)
+      if(app.isEmpty){
+        mapp.value.getOrElse(appid,app)
+      }else{
+        app
+      }
+
 
 
     })
 
     tupmediatype.zip(tup1)
-          .reduceByKey((list1,list2)=>list1.zip(list2).map(t=>t._1+t._2)).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4), x._2(5), x._2(6), x._2(7), x._2(8)))
-          .toDF("媒体类型", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数", "展示量", "点击量", "广告消费", "广告成本")
+          .reduceByKey((list1,list2)=>list1.zip(list2).map(t=>t._1+t._2)).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4),if(x._2(3)==0) 0 else x._2(3)/x._2(4), x._2(5), x._2(6),if(x._2(5)==0) 0 else x._2(6)/x._2(5), x._2(7), x._2(8)))
+          .toDF("媒体类型", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数","竞价成功率", "展示量", "点击量","点击率", "广告消费", "广告成本")
           .write.jdbc(url,"mediatype",prop)
 
 
@@ -201,8 +206,8 @@ val prop = new Properties()
 //          appname
 //        })
 //    tupappname.zip(tup1)
-//          .reduceByKey((list1,list2)=>list1.zip(list2).map(t=>t._1+t._2)).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4), x._2(5), x._2(6), x._2(7), x._2(8)))
-//          .toDF("渠道名称", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数", "展示量", "点击量", "广告消费", "广告成本")
+//          .reduceByKey((list1,list2)=>list1.zip(list2).map(x => (x._1,x._2(0), x._2(1), x._2(2), x._2(3), x._2(4),if(x._2(3)==0) 0 else x._2(3)/x._2(4), x._2(5), x._2(6),if(x._2(5)==0) 0 else x._2(6)/x._2(5), x._2(7), x._2(8)))
+//          .toDF("渠道名称", "原始请问", "有效请求", "广告请求", "参与竞价数", "竞价成功数","竞价成功率", "展示量", "点击量","点击率", "广告消费", "广告成本")
 //          .write.jdbc(url,"appname",prop)
   }
 
